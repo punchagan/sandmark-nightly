@@ -1,9 +1,12 @@
 import datetime
+import io
 import os
 from pathlib import Path
 import subprocess
+import zipfile
 
 import pandas as pd
+import requests
 import streamlit as st
 
 from validate_run import is_valid
@@ -13,14 +16,17 @@ GLOB_PAT = "**/{date:%Y%m%d}_*/**/*.log"
 
 
 @st.cache(ttl=300)
-def checkout_testing_branch():
+def fetch_testing_branch():
     path = "/tmp/sandmark-nightly-testing-branch"
     os.makedirs(path, exist_ok=True)
-    subprocess.check_call(
-        ["git", "--work-tree", str(path), "checkout", "testing", "--", "."]
+    url = (
+        "https://github.com/ocaml-bench/sandmark-nightly/archive/refs/heads/testing.zip"
     )
-    subprocess.check_call(["git", "reset"])
-    return path
+    r = requests.get(url, stream=True)
+    assert r.ok, "Failed to download zip file."
+    z = zipfile.ZipFile(io.BytesIO(r.content))
+    z.extractall(path)
+    return f"{path}/sandmark-nightly-testing"
 
 
 def collect_run_statuses(root, start_date):
@@ -62,8 +68,9 @@ def main():
     st.title(title)
 
     date = datetime.date.today()
-    path = checkout_testing_branch()
-    st.write(collect_run_statuses(Path(path), date))
+    path = fetch_testing_branch()
+    data = collect_run_statuses(Path(path), date)
+    st.write(data)
 
 
 if __name__ == "__main__":
