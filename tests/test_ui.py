@@ -3,10 +3,8 @@ import shutil
 import time
 
 import pytest
-from seleniumbase import BaseCase
-
 from app import app
-from apps.utils import ROOT, ARTIFACTS_DIR
+from apps.utils import ARTIFACTS_DIR, ROOT
 
 
 @pytest.fixture
@@ -41,7 +39,7 @@ def test_index_page(sb, create_test_data):
     sb.assert_exact_text("Latest commit", "#latest-commit")
     for each in app.apps:
         sb.assert_element(f'label:contains("{each["title"]}")')
-    sb.assert_text_not_visible("Traceback:", timeout=1)
+    sb.assert_text_not_visible("Traceback:", timeout=5)
 
 
 def test_sequential_benchmarks_page(sb, create_test_data):
@@ -50,7 +48,7 @@ def test_sequential_benchmarks_page(sb, create_test_data):
     sb.click('label:contains("Sequential Benchmarks")')
     sb.wait_for_text_not_visible("Running...")
     time.sleep(2)
-    sb.assert_text_not_visible("Traceback:", timeout=1)
+    sb.assert_text_not_visible("Traceback:", timeout=5)
 
 
 def test_parallel_benchmarks_page(sb, create_test_data):
@@ -59,7 +57,7 @@ def test_parallel_benchmarks_page(sb, create_test_data):
     sb.click('label:contains("Parallel Benchmarks")')
     sb.wait_for_text_not_visible("Running...")
     time.sleep(2)
-    sb.assert_text_not_visible("Traceback:", timeout=1)
+    sb.assert_text_not_visible("Traceback:", timeout=5)
 
 
 def test_perfstat_benchmarks_page(sb, create_test_data):
@@ -68,7 +66,7 @@ def test_perfstat_benchmarks_page(sb, create_test_data):
     sb.click('label:contains("Perfstat Output")')
     sb.wait_for_text_not_visible("Running...")
     time.sleep(2)
-    sb.assert_text_not_visible("Traceback:", timeout=1)
+    sb.assert_text_not_visible("Traceback:", timeout=5)
 
 
 def test_status_page(sb, create_test_data):
@@ -76,4 +74,4 @@ def test_status_page(sb, create_test_data):
     sb.open(f"{url}/status")
     sb.wait_for_text_not_visible("Running...")
     time.sleep(2)
-    sb.assert_text_not_visible("Traceback:", timeout=1)
+    sb.assert_text_not_visible("Traceback:", timeout=5)
