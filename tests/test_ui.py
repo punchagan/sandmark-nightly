@@ -75,6 +75,8 @@ def test_parallel_latency_benchmarks_page(sb, create_test_data):
     sb.click('label:contains("Parallel - latency")')
     sb.wait_for_text_not_visible("Running...")
     time.sleep(2)
+    html = sb.driver.execute_script("return document.body.innerHTML;")
+    print(html.replace("</", "\n</"))
     sb.assert_text_not_visible("Traceback:", timeout=1)
 
 
