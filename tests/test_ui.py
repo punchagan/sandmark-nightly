@@ -51,10 +51,28 @@ def test_sequential_benchmarks_page(sb, create_test_data):
     sb.assert_text_not_visible("Traceback:", timeout=1)
 
 
+def test_sequential_latency_benchmarks_page(sb, create_test_data):
+    url = "http://localhost:8501" if sb.data is None else sb.data
+    sb.open(url)
+    sb.click('label:contains("Sequential - latency")')
+    sb.wait_for_text_not_visible("Running...")
+    time.sleep(2)
+    sb.assert_text_not_visible("Traceback:", timeout=1)
+
+
 def test_parallel_benchmarks_page(sb, create_test_data):
     url = "http://localhost:8501" if sb.data is None else sb.data
     sb.open(url)
     sb.click('label:contains("Parallel - throughput")')
+    sb.wait_for_text_not_visible("Running...")
+    time.sleep(2)
+    sb.assert_text_not_visible("Traceback:", timeout=1)
+
+
+def test_parallel_latency_benchmarks_page(sb, create_test_data):
+    url = "http://localhost:8501" if sb.data is None else sb.data
+    sb.open(url)
+    sb.click('label:contains("Parallel - latency")')
     sb.wait_for_text_not_visible("Running...")
     time.sleep(2)
     sb.assert_text_not_visible("Traceback:", timeout=1)
